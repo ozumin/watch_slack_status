@@ -12,9 +12,11 @@ dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 TOKEN = os.environ.get("TOKEN") # 環境変数の値をAPに代入
 CHANNEL_ID = os.environ.get("CHANNEL_ID") # 送りたいslackのチャンネルID
+MY_NAME = os.environ.get("MY_NAME") # 自分のステータスは通知しない
 client = slack.WebClient(token=TOKEN)
 
 # 前回の結果の読み取り
+last_statuses = ''
 if os.path.exists("statuses.pickle"):
     with open('statuses.pickle', 'rb') as f:
         last_statuses = pickle.load(f)
@@ -35,5 +37,8 @@ with open('statuses.pickle', 'wb') as f:
 # 前回との差分をslackに送る
 if last_statuses:
     for s in statuses:
-        if statuses[s] != last_statuses[s]:
-            response = client.chat_postMessage(channel=CHANNEL_ID, text=s + ': ' + statuses[s])
+        if s == MY_NAME:
+            pass
+        else:
+            if statuses[s] != last_statuses[s]:
+                response = client.chat_postMessage(channel=CHANNEL_ID, text=s + ': ' + statuses[s])
