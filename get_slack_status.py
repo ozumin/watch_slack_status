@@ -29,7 +29,7 @@ response = requests.get('https://slack.com/api/users.list?token=' + TOKEN)
 member_list = json.JSONDecoder().decode(response.text)['members']
 statuses = {}
 for member in member_list:
-    statuses[member['name']] = member['profile']['status_text']
+    statuses[member['name']] = member['profile']['status_emoji'] + member['profile']['status_text']
 
 # 結果の保存
 with open(DIRPATH + 'statuses.pickle', 'wb') as f:
@@ -37,9 +37,9 @@ with open(DIRPATH + 'statuses.pickle', 'wb') as f:
 
 # 前回との差分をslackに送る
 if last_statuses:
-    for s in statuses:
-        if s == MY_NAME:
+    for k in statuses.keys():
+        if k == MY_NAME:
             pass
         else:
-            if statuses[s] != last_statuses[s]:
-                response = client.chat_postMessage(channel=CHANNEL_ID, text=s + ': ' + statuses[s])
+            if last_statuses[k] and statuses[k] != last_statuses[k]:
+                response = client.chat_postMessage(channel=CHANNEL_ID, text=k + ': ' + statuses[k])
