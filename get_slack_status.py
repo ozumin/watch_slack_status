@@ -29,6 +29,8 @@ response = requests.get('https://slack.com/api/users.list?token=' + TOKEN)
 member_list = json.JSONDecoder().decode(response.text)['members']
 statuses = {}
 for member in member_list:
+    if not member['profile']['status_emoji'] and member['profile']['status_text']:
+        member['profile']['status_emoji'] = ':speech_balloon:'
     statuses[member['name']] = member['profile']['status_emoji'] + member['profile']['status_text']
 
 # 結果の保存
