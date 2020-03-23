@@ -43,5 +43,6 @@ if last_statuses:
         if k == MY_NAME:
             pass
         else:
-            if last_statuses[k] and statuses[k] != last_statuses[k]:
+            if k in last_statuses.keys() and statuses[k] != last_statuses[k]:
                 response = client.chat_postMessage(channel=CHANNEL_ID, text=k + ': ' + statuses[k])
+                assert response["ok"]
